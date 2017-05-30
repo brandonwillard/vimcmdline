@@ -48,6 +48,12 @@ endif
 if !exists("g:cmdline_outhl")
     let g:cmdline_outhl = 1
 endif
+if !exists("g:cmdline_nolisted")
+    let g:cmdline_nolisted = 0
+endif
+if !exists("g:cmdline_golinedown")
+    let g:cmdline_golinedown = 1
+endif
 
 " Internal variables
 let g:cmdline_job = {"haskell": 0, "julia": 0, "lisp": 0, "matlab": 0,
@@ -184,6 +190,9 @@ function VimCmdLineStart_Nvim(app)
     if g:cmdline_outhl
         exe 'runtime syntax/cmdlineoutput_' . a:app . '.vim'
     endif
+    if g:cmdline_nolisted
+        set nobuflisted
+    endif
     exe "sbuffer " . edbuf
     stopinsert
 endfunction
@@ -265,11 +274,15 @@ endfunction
 function VimCmdLineSendLine()
     let line = getline(".")
     if strlen(line) == 0 && b:cmdline_send_empty == 0
-        call s:GoLineDown()
+        if g:cmdline_golinedown
+          call s:GoLineDown()
+        endif
         return
     endif
     call VimCmdLineSendCmd(line)
-    call s:GoLineDown()
+    if g:cmdline_golinedown
+      call s:GoLineDown()
+    endif
 endfunction
 
 function VimCmdLineSendParagraph()
