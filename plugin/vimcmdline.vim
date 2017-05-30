@@ -58,8 +58,8 @@ endif
 " Internal variables
 let g:cmdline_job = {"haskell": 0, "julia": 0, "lisp": 0, "matlab": 0,
             \ "prolog": 0, "python": 0, "ruby": 0, "sh": 0, "javascript": 0}
-let g:cmdline_termbuf = {"haskell": "", "julia": "", "lisp": "", "matlab": "",
-            \ "prolog": "", "python": "", "ruby": "", "sh": "", "javascript": ""}
+let g:cmdline_termbuf = {"haskell": -1, "julia": -1, "lisp": -1, "matlab": -1,
+            \ "prolog": -1, "python": -1, "ruby": -1, "sh": -1, "javascript": -1}
 let s:cmdline_app_pane = ''
 let g:cmdline_tmuxsname = {"haskell": "", "julia": "", "lisp": "", "matlab": "",
             \ "prolog": "", "python": "", "ruby": "", "sh": "", "javascript": ""}
@@ -183,7 +183,7 @@ function VimCmdLineStart_Nvim(app)
         endif
     endif
     let g:cmdline_job[thisft] = termopen(a:app, {'on_exit': function('s:VimCmdLineJobExit')})
-    let g:cmdline_termbuf[thisft] = bufname("%")
+    let g:cmdline_termbuf[thisft] = bufnr("%")
     if g:cmdline_esc_term
         tnoremap <buffer> <Esc> <C-\><C-n>
     endif
@@ -342,10 +342,10 @@ endfunction
 function VimCmdLineQuit(ftype)
     if exists("b:cmdline_quit_cmd")
         call VimCmdLineSendCmd(b:cmdline_quit_cmd)
-        if g:cmdline_termbuf[a:ftype] != ""
+        if g:cmdline_termbuf[a:ftype] > -1
             exe "sb " . g:cmdline_termbuf[a:ftype]
             startinsert
-            let g:cmdline_termbuf[a:ftype] = ""
+            let g:cmdline_termbuf[a:ftype] = -1
         endif
         let g:cmdline_tmuxsname[a:ftype] = ""
         let s:cmdline_app_pane = ''
