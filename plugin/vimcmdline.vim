@@ -198,19 +198,17 @@ function VimCmdLineStart_Nvim(app)
 endfunction
 
 function VimCmdLineCreateMaps()
-    exe 'nmap <silent><buffer> ' . g:cmdline_map_send . ' :call VimCmdLineSendLine()<CR>'
+    exe 'nmap <silent><buffer> ' . g:cmdline_map_send . ' <Plug>(cmdline-send-line)'
     if exists("b:cmdline_source_fun")
-        exe 'vmap <silent><buffer> ' . g:cmdline_map_send .
-                    \ ' <Esc>:call b:cmdline_source_fun(getline("' . "'" . '<", "'. "'". '>"))<CR>'
-        exe 'nmap <silent><buffer> ' . g:cmdline_map_source_fun .
-                    \ ' :call b:cmdline_source_fun(getline(1, "$"))<CR>'
-        exe 'nmap <silent><buffer> ' . g:cmdline_map_send_paragraph .
-                    \ ' :call VimCmdLineSendParagraph()<CR>'
-        exe 'nmap <silent><buffer> ' . g:cmdline_map_send_block .
-                    \ ' :call VimCmdLineSendMBlock()<CR>'
+        exe 'vmap <silent><buffer> ' . g:cmdline_map_send_selection . ' <Plug>(cmdline-send-selection)'
+        exe 'nmap <silent><buffer> ' . g:cmdline_map_send_selection . ' <Plug>(cmdline-send-selection)'
+        exe 'vmap <silent><buffer> ' . g:cmdline_map_send . ' <Plug>(cmdline-send-lines)'
+        exe 'nmap <silent><buffer> ' . g:cmdline_map_source_fun . ' <Plug>(cmdline-send-file)'
+        exe 'nmap <silent><buffer> ' . g:cmdline_map_send_paragraph . ' <Plug>(cmdline-send-paragraph)'
+        exe 'nmap <silent><buffer> ' . g:cmdline_map_send_block . ' <Plug>(cmdline-send-mblock)'
     endif
     if exists("b:cmdline_quit_cmd")
-        exe 'nmap <silent><buffer> ' . g:cmdline_map_quit . ' :call VimCmdLineQuit("' . b:cmdline_filetype . '")<CR>'
+        exe 'nmap <silent><buffer> ' . g:cmdline_map_quit . ' <Plug>(cmdline-send-quit)'
     endif
 endfunction
 
@@ -283,6 +281,36 @@ function VimCmdLineSendLine()
     if g:cmdline_golinedown
       call s:GoLineDown()
     endif
+endfunction
+
+function! VimCmdLineSendSelection(curmode) range		
+  "		
+  " This function gets either the visually selected text, or the current
+  " <cWORD>.		
+  "		
+  if (a:firstline == 1 && a:lastline == line('$')) || a:curmode == "n"		
+    return [expand('<cWORD>')]		
+  endif		
+
+  let [lnum1, col1] = getpos("'<")[1:2]		
+  let end_pos = getpos("'>")		
+  let [lnum2, col2] = end_pos[1:2]		
+  let lines = getline(lnum1, lnum2)		
+		
+  let mode_offset = 1		
+  if &selection == 'exclusive'		
+    let mode_offset = 2		
+  endif		
+		
+  let lines[-1] = lines[-1][:(col2 - mode_offset)]		
+  let lines[0] = lines[0][col1 - 1:]		
+		
+  " Sends the cursor to the beginning of the last visual select		
+  " line.  We probably want to leave the cursor at the end of the		
+  " visually selected region instead.		
+  "call cursor(lnum2, 1)		
+  execute "normal! gv\<Esc>"		
+  return lines
 endfunction
 
 function VimCmdLineSendParagraph()
@@ -376,6 +404,27 @@ function VimCmdLineSetApp(ftype)
         call VimCmdLineCreateMaps()
     endif
 endfunction
+
+command! -range -nargs=1 ReplSendSelectionCmd
+      \ call b:cmdline_source_fun(VimCmdLineSendSelection(<f-args>)) 
+
+" g:cmdline_map_send_selection 
+nnoremap <silent> <Plug>(cmdline-send-selection)
+      \ :ReplSendSelectionCmd n<CR>
+vnoremap <silent> <Plug>(cmdline-send-selection)
+      \ :ReplSendSelectionCmd v<CR>
+nnoremap <silent> <Plug>(cmdline-send-line)
+      \ :<C-U>call VimCmdLineSendLine()<CR>
+vnoremap <silent> <Plug>(cmdline-send-lines)
+      \ <Esc>:<C-U>call b:cmdline_source_fun(getline("' . "'" . '<", "'. "'". '>"))<CR>
+nnoremap <silent> <Plug>(cmdline-send-file)
+      \ :<C-U>call b:cmdline_source_fun(getline(1, "$"))<CR>
+nnoremap <silent> <Plug>(cmdline-send-paragraph)
+      \ :<C-U>call VimCmdLineSendParagraph()<CR>
+nnoremap <silent> <Plug>(cmdline-send-mblock)
+      \ :<C-U>call VimCmdLineSendMBlock()<CR>
+nnoremap <silent> <Plug>(cmdline-send-quit)
+      \ :<C-U>call VimCmdLineQuit(b:cmdline_filetype)<CR>
 
 " Default mappings
 if !exists("g:cmdline_map_start")
