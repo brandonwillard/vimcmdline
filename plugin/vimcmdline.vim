@@ -199,17 +199,14 @@ endfunction
 
 function VimCmdLineCreateMaps()
     exe 'nmap <silent><buffer> ' . g:cmdline_map_send . ' <Plug>(cmdline-send-line)'
-    if exists("b:cmdline_source_fun")
-        exe 'vmap <silent><buffer> ' . g:cmdline_map_send_selection . ' <Plug>(cmdline-send-selection)'
-        exe 'nmap <silent><buffer> ' . g:cmdline_map_send_selection . ' <Plug>(cmdline-send-selection)'
-        exe 'vmap <silent><buffer> ' . g:cmdline_map_send . ' <Plug>(cmdline-send-lines)'
-        exe 'nmap <silent><buffer> ' . g:cmdline_map_source_fun . ' <Plug>(cmdline-send-file)'
-        exe 'nmap <silent><buffer> ' . g:cmdline_map_send_paragraph . ' <Plug>(cmdline-send-paragraph)'
-        exe 'nmap <silent><buffer> ' . g:cmdline_map_send_block . ' <Plug>(cmdline-send-mblock)'
-    endif
-    if exists("b:cmdline_quit_cmd")
-        exe 'nmap <silent><buffer> ' . g:cmdline_map_quit . ' <Plug>(cmdline-send-quit)'
-    endif
+    exe 'vmap <silent><buffer> ' . g:cmdline_map_send_selection . ' <Plug>(cmdline-send-selection)'
+    exe 'nmap <silent><buffer> ' . g:cmdline_map_send_selection . ' <Plug>(cmdline-send-selection)'
+    exe 'vmap <silent><buffer> ' . g:cmdline_map_send . ' <Plug>(cmdline-send-lines)'
+    exe 'nmap <silent><buffer> ' . g:cmdline_map_source_fun . ' <Plug>(cmdline-send-file)'
+    exe 'nmap <silent><buffer> ' . g:cmdline_map_send_paragraph . ' <Plug>(cmdline-send-paragraph)'
+    exe 'nmap <silent><buffer> ' . g:cmdline_map_send_block . ' <Plug>(cmdline-send-mblock)'
+    exe 'nmap <silent><buffer> ' . g:cmdline_map_quit . ' <Plug>(cmdline-send-quit)'
+    exe 'nmap <silent><buffer> ' . g:cmdline_map_start . ' <Plug>(cmdline-send-start)'
 endfunction
 
 " Common procedure to start the interpreter
@@ -425,6 +422,8 @@ nnoremap <silent> <Plug>(cmdline-send-mblock)
       \ :<C-U>call VimCmdLineSendMBlock()<CR>
 nnoremap <silent> <Plug>(cmdline-send-quit)
       \ :<C-U>call VimCmdLineQuit(b:cmdline_filetype)<CR>
+nnoremap <silent> <Plug>(cmdline-send-start)
+      \ :<C-U>call VimCmdLineStartApp<CR>
 
 " Default mappings
 if !exists("g:cmdline_map_start")
