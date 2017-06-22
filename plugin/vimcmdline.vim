@@ -423,7 +423,7 @@ nnoremap <silent> <Plug>(cmdline-send-mblock)
 nnoremap <silent> <Plug>(cmdline-send-quit)
       \ :<C-U>call VimCmdLineQuit(b:cmdline_filetype)<CR>
 nnoremap <silent> <Plug>(cmdline-send-start)
-      \ :<C-U>call VimCmdLineStartApp<CR>
+      \ :<C-U>call VimCmdLineStartApp()<CR>
 
 " Default mappings
 if !exists("g:cmdline_map_start")
