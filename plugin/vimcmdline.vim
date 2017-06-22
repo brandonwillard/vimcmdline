@@ -413,7 +413,7 @@ vnoremap <silent> <Plug>(cmdline-send-selection)
 nnoremap <silent> <Plug>(cmdline-send-line)
       \ :<C-U>call VimCmdLineSendLine()<CR>
 vnoremap <silent> <Plug>(cmdline-send-lines)
-      \ <Esc>:<C-U>call b:cmdline_source_fun(getline("' . "'" . '<", "'. "'". '>"))<CR>
+      \ <Esc>:<C-U>call b:cmdline_source_fun(getline("'<", "'>"))<CR>
 nnoremap <silent> <Plug>(cmdline-send-file)
       \ :<C-U>call b:cmdline_source_fun(getline(1, "$"))<CR>
 nnoremap <silent> <Plug>(cmdline-send-paragraph)
