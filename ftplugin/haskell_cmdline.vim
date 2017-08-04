@@ -20,5 +20,3 @@ let b:cmdline_send_empty = get(b:, 'cmdline_send_empty', 0)
 let b:cmdline_filetype = get(b", 'cmdline_filetype', "haskell")
 
 exe 'autocmd VimLeave * call delete(g:cmdline_tmp_dir . "/lines.hs")'
-
-call VimCmdLineSetApp("haskell")

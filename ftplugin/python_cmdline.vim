@@ -26,5 +26,3 @@ if exists("g:cmdline_app")
         endif
     endfor
 endif
-
-call VimCmdLineSetApp("python")
