@@ -211,9 +211,9 @@ endfunction
 
 " Common procedure to start the interpreter
 function VimCmdLineStartApp()
-  let cmdline_app = get(b:, "cmdline_app", "")
+  let Cmdline_app = get(b:, "cmdline_app", "")
 
-  if cmdline_app == ""
+  if Cmdline_app == ""
     echomsg 'There is no application defined to be executed for file of type "' . b:cmdline_filetype . '".'
     return
   endif
@@ -224,9 +224,10 @@ function VimCmdLineStartApp()
     call mkdir(g:cmdline_tmp_dir)
   endif
 
-  let app_str = cmdline_app
-  if type(app_str) == v:t_func
-    let app_str = app_str()
+  if type(Cmdline_app) == v:t_func
+    let app_str = Cmdline_app()
+  else
+    let app_str = CmdLine_app
   endif
 
   if exists("g:cmdline_external_term_cmd")
