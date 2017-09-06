@@ -227,7 +227,7 @@ function VimCmdLineStartApp()
   if type(Cmdline_app) == v:t_func
     let app_str = Cmdline_app()
   else
-    let app_str = CmdLine_app
+    let app_str = Cmdline_app
   endif
 
   if exists("g:cmdline_external_term_cmd")
